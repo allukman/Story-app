@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">StoryApp</string>
+
+    <string name="login">Log in</string>
+    <string name="register">Register</string>
+    <string name="welcome">Welcome</string>
+
+    <string name="dont_have_an_account">Don\'t have an account? </string>
+    <string name="sign_up">Sign up</string>
+
+<!--    Content Description   -->
+
+    <string name="desc_image_welcome">Image Welcome</string>
+
+</resources>
