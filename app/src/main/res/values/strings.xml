@@ -5,11 +5,22 @@
     <string name="register">Register</string>
     <string name="welcome">Welcome</string>
 
-    <string name="dont_have_an_account">Don\'t have an account? </string>
-    <string name="sign_up">Sign up</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="name">Name</string>
 
-<!--    Content Description   -->
+
+    <string name="sign_up">Sign up</string>
+    <string name="sign_in">Sign in</string>
+    <string name="dont_have_an_account">Don\'t have an account? </string>
+    <string name="already_have_an_account">Already have an account?</string>
+
+    <!--    Content Description   -->
 
     <string name="desc_image_welcome">Image Welcome</string>
+    <string name="desc_image_login">Image Login</string>
+    <string name="desc_image_register">Image Register</string>
+
+
 
 </resources>
