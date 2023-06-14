@@ -22,6 +22,9 @@ class LoginViewModel: ViewModel(), CoroutineScope {
     private val _login = MutableLiveData<LoginResponse>()
     val login: LiveData<LoginResponse> = _login
 
+    private val _mError = MutableLiveData<String>()
+    val mError: LiveData<String> = _mError
+
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
@@ -53,6 +56,9 @@ class LoginViewModel: ViewModel(), CoroutineScope {
                         if (response.isSuccessful) {
                             _login.value = response.body()
                         } else {
+                            _mError.value = response.message()
+                            Log.d(TAG, "sini 1")
+                            Log.d(TAG, "msg $response")
                             Log.e(TAG, "onFailure: ${response.message()}")
                         }
                     }
@@ -60,6 +66,7 @@ class LoginViewModel: ViewModel(), CoroutineScope {
                     override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                         _isLoading.value = false
                         Log.e(TAG, "onFailure: ${t.message.toString()}")
+                        Log.d(TAG, "sini 2")
                     }
 
                 })

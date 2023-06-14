@@ -41,6 +41,7 @@
             app:startIconDrawable="@drawable/ic_baseline_email_24">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/emailEditText"
                 style="@style/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -55,15 +56,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dimen_16dp"
+            app:passwordToggleEnabled="true"
             app:startIconDrawable="@drawable/ic_baseline_lock_24">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/passwordEditText"
                 style="@style/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="@string/password"
-                android:inputType="textEmailAddress" />
+                android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>
@@ -80,6 +83,15 @@
         android:text="@string/login"
         android:textAllCaps="false"
         android:textColor="?colorOnBackground"
+        app:layout_constraintRight_toRightOf="@id/layout_text_input"
+        app:layout_constraintTop_toBottomOf="@id/layout_text_input" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_margin="@dimen/dimen_16dp"
         app:layout_constraintRight_toRightOf="@id/layout_text_input"
         app:layout_constraintTop_toBottomOf="@id/layout_text_input" />
 

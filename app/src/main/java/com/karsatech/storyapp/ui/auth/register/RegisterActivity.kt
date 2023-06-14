@@ -35,17 +35,13 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun subscribeRegisterViewModel() {
         registerViewModel.register.observe(this) { data ->
-            Log.d(TAG, "data : $data")
             if (!data.error) {
-                Toast.makeText(this, data.message, Toast.LENGTH_SHORT).show()
                 intentLogin()
-            } else {
-                Toast.makeText(this, data.message, Toast.LENGTH_SHORT).show()
             }
+            Toast.makeText(this, data.message, Toast.LENGTH_SHORT).show()
         }
 
         registerViewModel.isLoading.observe(this) { loading ->
-            Log.d(TAG, "loading : $loading")
             showLoading(loading)
         }
     }
