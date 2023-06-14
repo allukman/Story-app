@@ -3,13 +3,10 @@ package com.karsatech.storyapp.ui.welcome
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.karsatech.storyapp.R
 import com.karsatech.storyapp.databinding.ActivityWelcomeBinding
-import com.karsatech.storyapp.ui.auth.LoginActivity
-import com.karsatech.storyapp.ui.auth.RegisterActivity
+import com.karsatech.storyapp.ui.auth.login.LoginActivity
+import com.karsatech.storyapp.ui.auth.register.RegisterActivity
 
 class WelcomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityWelcomeBinding

@@ -1,10 +1,10 @@
-package com.karsatech.storyapp.ui.auth
+package com.karsatech.storyapp.ui.auth.login
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.karsatech.storyapp.R
 import com.karsatech.storyapp.databinding.ActivityLoginBinding
+import com.karsatech.storyapp.ui.auth.register.RegisterActivity
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding

@@ -20,6 +20,13 @@
     <string name="desc_image_welcome">Image Welcome</string>
     <string name="desc_image_login">Image Login</string>
     <string name="desc_image_register">Image Register</string>
+    
+    <!--    Error String    -->
+
+    <string name="error_empty_value">%s can\'t be empty</string>
+    <string name="error_length">%1$s must be at least %2$d characters long</string>
+    <string name="error_email_format">Please enter a valid email</string>
+
 
 
 
