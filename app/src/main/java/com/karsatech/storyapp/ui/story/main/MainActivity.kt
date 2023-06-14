@@ -1,4 +1,4 @@
-package com.karsatech.storyapp.ui.story
+package com.karsatech.storyapp.ui.story.main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

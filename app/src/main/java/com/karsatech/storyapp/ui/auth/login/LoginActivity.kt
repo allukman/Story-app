@@ -1,25 +1,37 @@
 package com.karsatech.storyapp.ui.auth.login
 
+import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.ViewModelProvider
 import com.karsatech.storyapp.R
 import com.karsatech.storyapp.data.remote.retrofit.ApiConfig
 import com.karsatech.storyapp.data.remote.retrofit.ApiService
 import com.karsatech.storyapp.databinding.ActivityLoginBinding
+import com.karsatech.storyapp.ui.ViewModelFactory
 import com.karsatech.storyapp.ui.auth.register.RegisterActivity
-import com.karsatech.storyapp.ui.auth.register.RegisterViewModel
-import com.karsatech.storyapp.ui.story.MainActivity
+import com.karsatech.storyapp.ui.story.main.MainActivity
+import com.karsatech.storyapp.utils.UserPreference
 
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var service: ApiService
 
-    private val loginViewModel by viewModels<LoginViewModel>()
+    private val viewModelFactory: ViewModelProvider.Factory by lazy {
+        ViewModelFactory(UserPreference.getInstance(application.dataStore))
+    }
+
+    private val loginViewModel: LoginViewModel by viewModels { viewModelFactory }
+
+    //    private val loginViewModel by viewModels<LoginViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
@@ -42,11 +54,13 @@ class LoginActivity : AppCompatActivity() {
     private fun subscribeLoginViewModel() {
         loginViewModel.login.observe(this) { data ->
             if (!data.error) {
+                data.loginResult?.let { loginViewModel.saveUser(it) }
+                loginViewModel.login()
+
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
                 finish()
             }
-            Log.d(TAG, "Sampe kesini : $data")
             Toast.makeText(this, data.message, Toast.LENGTH_SHORT).show()
         }
 
@@ -117,6 +131,7 @@ class LoginActivity : AppCompatActivity() {
         binding.btnLogin.setOnClickListener {
             validation()
         }
+
     }
 
     companion object {

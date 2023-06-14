@@ -4,8 +4,12 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.karsatech.storyapp.data.remote.response.LoginResponse
+import com.karsatech.storyapp.data.remote.response.LoginResult
 import com.karsatech.storyapp.data.remote.retrofit.ApiService
+import com.karsatech.storyapp.utils.UserPreference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -16,7 +20,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import kotlin.coroutines.CoroutineContext
 
-class LoginViewModel: ViewModel(), CoroutineScope {
+class LoginViewModel(private val pref: UserPreference) : ViewModel(), CoroutineScope {
     private lateinit var service: ApiService
 
     private val _login = MutableLiveData<LoginResponse>()
@@ -74,6 +78,26 @@ class LoginViewModel: ViewModel(), CoroutineScope {
                 Log.e(TAG, "onFailure: ${e.localizedMessage}")
                 e.printStackTrace()
             }
+        }
+    }
+
+    fun saveUser(user: LoginResult) {
+        viewModelScope.launch {
+            pref.saveUser(user)
+        }
+    }
+
+    fun getUser(): LiveData<LoginResult> {
+        return pref.getUser().asLiveData()
+    }
+
+    fun getToken(): LiveData<String> {
+        return pref.getToken().asLiveData()
+    }
+
+    fun login() {
+        viewModelScope.launch {
+            pref.login()
         }
     }
 }

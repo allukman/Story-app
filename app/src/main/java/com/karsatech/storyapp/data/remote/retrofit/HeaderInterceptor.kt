@@ -1,23 +1,45 @@
 package com.karsatech.storyapp.data.remote.retrofit
 
 import android.content.Context
+import android.util.Log
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import com.karsatech.storyapp.utils.UserPreference
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 class HeaderInterceptor(private val context : Context) : Interceptor {
 
-//    private lateinit var sharedPref : PreferencesHelper
+    private val userPreference: UserPreference = UserPreference.getInstance(context.dataStore)
 
-    override fun intercept(chain: Interceptor.Chain): Response = chain.run {
-//        sharedPref = PreferencesHelper(context)
+    override fun intercept(chain: Interceptor.Chain): Response = runBlocking {
+        val token = userPreference.getToken().first()
 
-//        val tokenAuth = sharedPref.getValueString(Constant.prefUserToken)
-        proceed(
-            request().newBuilder()
-                .addHeader("Authorization", "Bearer ")
-                .header("Connection", "close")
-                .removeHeader("Content-Length")
-                .build()
-        )
+        Log.d("HeaderInterceptor", token)
+
+        val request = chain.request().newBuilder()
+            .addHeader("Authorization", "Bearer $token")
+            .header("Connection", "close")
+            .removeHeader("Content-Length")
+            .build()
+
+        chain.proceed(request)
     }
+//    override fun intercept(chain: Interceptor.Chain): Response = chain.run {
+//
+//        val token = userPreference.getToken().first()
+//
+//
+//        proceed(
+//            request().newBuilder()
+//                .addHeader("Authorization", "Bearer ")
+//                .header("Connection", "close")
+//                .removeHeader("Content-Length")
+//                .build()
+//        )
+//    }
 }
