@@ -4,10 +4,16 @@
     <string name="login">Log in</string>
     <string name="register">Register</string>
     <string name="welcome">Welcome</string>
+    <string name="logout">logout</string>
 
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="name">Name</string>
+<!--    <style name="description">Description</style>-->
+
+    <string name="gallery">Gallery</string>
+    <string name="camera">Camera</string>
+    <string name="upload">Upload</string>
 
 
     <string name="sign_up">Sign up</string>
@@ -20,12 +26,15 @@
     <string name="desc_image_welcome">Image Welcome</string>
     <string name="desc_image_login">Image Login</string>
     <string name="desc_image_register">Image Register</string>
+    <string name="desc_add_new_story">Add new story</string>
+    <string name="image_profile">Image Profile</string>
 
     <!--    Error String    -->
 
     <string name="error_empty_value">%s can\'t be empty</string>
     <string name="error_length">%1$s must be at least %2$d characters long</string>
     <string name="error_email_format">Please enter a valid email</string>
-
+    <string name="image_cant_be_empty">Image can\'t be empty</string>
+    <string name="list_story">List Story</string>
 
 </resources>

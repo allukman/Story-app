@@ -1,4 +1,4 @@
-package com.karsatech.storyapp.ui.auth.login
+package com.karsatech.storyapp.ui.story.main
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -6,9 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.karsatech.storyapp.data.remote.response.LoginResponse
+import com.karsatech.storyapp.data.remote.response.DetailStory
 import com.karsatech.storyapp.data.remote.response.LoginResult
+import com.karsatech.storyapp.data.remote.response.StoryResponse
 import com.karsatech.storyapp.data.remote.retrofit.ApiService
+import com.karsatech.storyapp.ui.auth.login.LoginViewModel
 import com.karsatech.storyapp.utils.UserPreference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,11 +22,12 @@ import retrofit2.Callback
 import retrofit2.Response
 import kotlin.coroutines.CoroutineContext
 
-class LoginViewModel(private val pref: UserPreference) : ViewModel(), CoroutineScope {
+class MainViewModel(private val pref: UserPreference): ViewModel(), CoroutineScope {
+
     private lateinit var service: ApiService
 
-    private val _login = MutableLiveData<LoginResponse>()
-    val login: LiveData<LoginResponse> = _login
+    private val _stories = MutableLiveData<List<DetailStory>>()
+    val stories: LiveData<List<DetailStory>> = _stories
 
     private val _mError = MutableLiveData<String>()
     val mError: LiveData<String> = _mError
@@ -40,30 +43,33 @@ class LoginViewModel(private val pref: UserPreference) : ViewModel(), CoroutineS
     }
 
 
+    companion object {
+        private const val TAG = "MainViewModel"
+    }
 
-    fun loginUser(email: String, password: String) {
+    fun getAllStories() {
         _isLoading.value = true
         launch {
             try {
                 val result = withContext(Dispatchers.IO) {
-                    service.loginUser(email, password)
+                    service.getAllStories()
                 }
 
-                result.enqueue(object : Callback<LoginResponse> {
+                result.enqueue(object : Callback<StoryResponse> {
                     override fun onResponse(
-                        call: Call<LoginResponse>,
-                        response: Response<LoginResponse>
+                        call: Call<StoryResponse>,
+                        response: Response<StoryResponse>
                     ) {
                         _isLoading.value = false
                         if (response.isSuccessful) {
-                            _login.value = response.body()
+                            _stories.value = response.body()?.listStory
                         } else {
                             _mError.value = response.message()
                             Log.e(TAG, "onFailure: ${response.message()}")
                         }
                     }
 
-                    override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                    override fun onFailure(call: Call<StoryResponse>, t: Throwable) {
                         _isLoading.value = false
                         Log.e(TAG, "onFailure: ${t.message.toString()}")
                     }
@@ -76,19 +82,13 @@ class LoginViewModel(private val pref: UserPreference) : ViewModel(), CoroutineS
         }
     }
 
-    fun saveUser(user: LoginResult) {
-        viewModelScope.launch {
-            pref.saveUser(user)
-        }
+    fun getUser(): LiveData<LoginResult> {
+        return pref.getUser().asLiveData()
     }
 
-    fun login() {
+    fun logout() {
         viewModelScope.launch {
-            pref.login()
+            pref.clearData()
         }
-    }
-
-    companion object {
-        private const val TAG = "LoginViewModel"
     }
 }

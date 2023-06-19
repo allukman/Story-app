@@ -1,22 +1,38 @@
 package com.karsatech.storyapp.ui.welcome
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.View
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.lifecycleScope
+import com.karsatech.storyapp.R
 import com.karsatech.storyapp.databinding.ActivityWelcomeBinding
 import com.karsatech.storyapp.ui.auth.login.LoginActivity
 import com.karsatech.storyapp.ui.auth.register.RegisterActivity
+import com.karsatech.storyapp.ui.story.main.MainActivity
+import com.karsatech.storyapp.utils.UserPreference
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 class WelcomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityWelcomeBinding
-
+    private lateinit var userPreference: UserPreference
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         supportActionBar?.hide()
         binding = ActivityWelcomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        userPreference = UserPreference.getInstance(application.dataStore)
 
         binding.btnLogin.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
@@ -28,24 +44,42 @@ class WelcomeActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-//        textWelcomeAnimate()
+//
     }
 
-//    private fun textWelcomeAnimate() {
-//        val textView = binding.tvWelcome
-//        val textToType = resources.getString(R.string.welcome)
-//        val delayMillis = 200L
-//        val handler = Handler(Looper.getMainLooper())
-//        var index = 0
-//
-//        handler.postDelayed(object : Runnable {
-//            override fun run() {
-//                if (index <= textToType.length) {
-//                    textView.text = textToType.subSequence(0, index)
-//                    index++
-//                    handler.postDelayed(this, delayMillis)
-//                }
-//            }
-//        }, delayMillis)
-//    }
+    override fun onResume() {
+        super.onResume()
+
+        lifecycleScope.launch {
+            val token = userPreference.getToken().first()
+
+            if (token.isNotEmpty()) {
+                val intent = Intent(this@WelcomeActivity, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            } else {
+                binding.container.visibility = View.VISIBLE
+                textWelcomeAnimate()
+            }
+        }
+
+    }
+
+    private fun textWelcomeAnimate() {
+        val textView = binding.tvAppName
+        val textToType = resources.getString(R.string.app_name)
+        val delayMillis = 200L
+        val handler = Handler(Looper.getMainLooper())
+        var index = 0
+
+        handler.postDelayed(object : Runnable {
+            override fun run() {
+                if (index <= textToType.length) {
+                    textView.text = textToType.subSequence(0, index)
+                    index++
+                    handler.postDelayed(this, delayMillis)
+                }
+            }
+        }, delayMillis)
+    }
 }
