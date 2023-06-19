@@ -1,5 +1,6 @@
 package com.karsatech.storyapp.ui.welcome
 
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +19,7 @@ import com.karsatech.storyapp.ui.auth.login.LoginActivity
 import com.karsatech.storyapp.ui.auth.register.RegisterActivity
 import com.karsatech.storyapp.ui.story.main.MainActivity
 import com.karsatech.storyapp.utils.UserPreference
+import com.karsatech.storyapp.utils.Views.onCLick
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -34,17 +36,29 @@ class WelcomeActivity : AppCompatActivity() {
 
         userPreference = UserPreference.getInstance(application.dataStore)
 
-        binding.btnLogin.setOnClickListener {
+        playAnimation()
+        onClick()
+
+    }
+
+    private fun onClick() {
+        binding.btnLogin.onCLick {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
 
-        binding.tvRegister.setOnClickListener {
+        binding.tvRegister.onCLick {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
         }
+    }
 
-//
+    private fun playAnimation() {
+        ObjectAnimator.ofFloat(binding.ivWelcome, View.TRANSLATION_X, -30f, 30f).apply {
+            duration = 6000
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.REVERSE
+        }.start()
     }
 
     override fun onResume() {

@@ -1,14 +1,13 @@
 package com.karsatech.storyapp.ui.auth.register
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Intent
-import android.opengl.Visibility
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
-import com.karsatech.storyapp.R
+import androidx.appcompat.app.AppCompatActivity
 import com.karsatech.storyapp.data.remote.retrofit.ApiConfig
 import com.karsatech.storyapp.data.remote.retrofit.ApiService
 import com.karsatech.storyapp.databinding.ActivityRegisterBinding
@@ -34,10 +33,29 @@ class RegisterActivity : AppCompatActivity() {
         service = ApiConfig.getApiClient(this)!!.create(ApiService::class.java)
         registerValidator = Validator.Register()
 
+        playAnimation()
         setupViews()
         setOnClick()
         settingViewModel()
         subscribeRegisterViewModel()
+    }
+
+    private fun playAnimation() {
+        ObjectAnimator.ofFloat(binding.ivRegister, View.TRANSLATION_X, -30f, 30f).apply {
+            duration = 6000
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.REVERSE
+        }.start()
+
+        val name = ObjectAnimator.ofFloat(binding.etLayoutName, View.ALPHA, 1f).setDuration(500)
+        val email = ObjectAnimator.ofFloat(binding.etLayoutEmail, View.ALPHA, 1f).setDuration(500)
+        val password = ObjectAnimator.ofFloat(binding.etLayoutPassword, View.ALPHA, 1f).setDuration(500)
+        val register = ObjectAnimator.ofFloat(binding.btnRegister, View.ALPHA, 1f).setDuration(500)
+
+        AnimatorSet().apply {
+            playSequentially(name, email, password, register)
+            start()
+        }
     }
 
     private fun subscribeRegisterViewModel() {

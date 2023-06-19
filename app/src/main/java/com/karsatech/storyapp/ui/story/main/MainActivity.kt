@@ -2,19 +2,15 @@ package com.karsatech.storyapp.ui.story.main
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.karsatech.storyapp.R
 import com.karsatech.storyapp.data.remote.response.DetailStory
@@ -26,7 +22,6 @@ import com.karsatech.storyapp.ui.adapter.StoryAdapter
 import com.karsatech.storyapp.ui.story.add.AddStoryActivity
 import com.karsatech.storyapp.ui.welcome.WelcomeActivity
 import com.karsatech.storyapp.utils.UserPreference
-import kotlinx.coroutines.launch
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 class MainActivity : AppCompatActivity() {

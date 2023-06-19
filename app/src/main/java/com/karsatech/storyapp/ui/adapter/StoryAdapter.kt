@@ -1,21 +1,16 @@
 package com.karsatech.storyapp.ui.adapter
 
-import android.app.Activity
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.app.ActivityOptionsCompat
-import androidx.core.util.Pair
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.karsatech.storyapp.data.remote.response.DetailStory
 import com.karsatech.storyapp.databinding.ItemStoryBinding
 import com.karsatech.storyapp.ui.story.detail.DetailStoryActivity
 import com.karsatech.storyapp.utils.loadImage
 import com.karsatech.storyapp.utils.withCurrentDateFormat
-import com.karsatech.storyapp.utils.withDateFormat
 
 class StoryAdapter : ListAdapter<DetailStory, StoryAdapter.RecyclerViewHolder>(DIFF_CALLBACK){
 
@@ -48,15 +43,7 @@ class StoryAdapter : ListAdapter<DetailStory, StoryAdapter.RecyclerViewHolder>(D
             itemView.setOnClickListener {
                 val intent = Intent(itemView.context, DetailStoryActivity::class.java)
                 intent.putExtra("STORY", data)
-
-                val optionsCompat: ActivityOptionsCompat =
-                    ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        itemView.context as Activity,
-                        Pair(bind.profileImageView, "image"),
-                        Pair(bind.nameTextView, "name"),
-                        Pair(bind.descTextView, "desc")
-                    )
-                itemView.context.startActivity(intent, optionsCompat.toBundle())
+                itemView.context.startActivity(intent)
             }
         }
     }

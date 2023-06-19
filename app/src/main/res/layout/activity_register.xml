@@ -42,6 +42,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:alpha="0"
                 app:startIconDrawable="@drawable/ic_baseline_person_24">
 
                 <com.karsatech.storyapp.view.customview.CustomEditTextName
@@ -57,6 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dimen_16dp"
+                android:alpha="0"
                 app:startIconDrawable="@drawable/ic_baseline_email_24">
 
                 <com.karsatech.storyapp.view.customview.CustomEditTextEmail
@@ -74,6 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dimen_16dp"
                 app:passwordToggleEnabled="true"
+                android:alpha="0"
                 app:startIconDrawable="@drawable/ic_baseline_lock_24">
 
                 <com.karsatech.storyapp.view.customview.CustomEditTextPassword
@@ -90,6 +93,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dimen_16dp"
+            android:alpha="0"
             android:text="@string/register"
             android:enabled="false"
             android:paddingHorizontal="@dimen/dimen_24dp"

@@ -10,7 +10,6 @@ import com.karsatech.storyapp.data.remote.response.DetailStory
 import com.karsatech.storyapp.data.remote.response.LoginResult
 import com.karsatech.storyapp.data.remote.response.StoryResponse
 import com.karsatech.storyapp.data.remote.retrofit.ApiService
-import com.karsatech.storyapp.ui.auth.login.LoginViewModel
 import com.karsatech.storyapp.utils.UserPreference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

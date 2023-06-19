@@ -1,5 +1,7 @@
 package com.karsatech.storyapp.ui.auth.login
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -45,6 +47,7 @@ class LoginActivity : AppCompatActivity() {
         service = ApiConfig.getApiClient(this)!!.create(ApiService::class.java)
         loginValidator = Validator.Login()
 
+        playAnimation()
         setupViews()
         setOnClick()
         settingViewModel()
@@ -79,6 +82,23 @@ class LoginActivity : AppCompatActivity() {
             if (error.isNotEmpty()) {
                 Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    private fun playAnimation() {
+        ObjectAnimator.ofFloat(binding.ivLogin, View.TRANSLATION_X, -30f, 30f).apply {
+            duration = 6000
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.REVERSE
+        }.start()
+
+        val email = ObjectAnimator.ofFloat(binding.etLayoutEmail, View.ALPHA, 1f).setDuration(500)
+        val password = ObjectAnimator.ofFloat(binding.etLayoutPassword, View.ALPHA, 1f).setDuration(500)
+        val login = ObjectAnimator.ofFloat(binding.btnLogin, View.ALPHA, 1f).setDuration(500)
+
+        AnimatorSet().apply {
+            playSequentially(email, password, login)
+            start()
         }
     }
 
