@@ -21,9 +21,14 @@ import com.karsatech.storyapp.data.remote.retrofit.ApiService
 import com.karsatech.storyapp.databinding.ActivityAddStoryBinding
 import com.karsatech.storyapp.ui.camera.CameraActivity
 import com.karsatech.storyapp.ui.story.main.MainActivity
+import com.karsatech.storyapp.utils.AppUtils
+import com.karsatech.storyapp.utils.Validator
+import com.karsatech.storyapp.utils.Views.onTextChanged
 import com.karsatech.storyapp.utils.reduceFileImage
 import com.karsatech.storyapp.utils.rotateFile
 import com.karsatech.storyapp.utils.uriToFile
+import com.karsatech.storyapp.utils.AppUtils.InitTextWatcher
+import com.karsatech.storyapp.utils.Views.onCLick
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -34,6 +39,7 @@ class AddStoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddStoryBinding
     private var getFile: File? = null
     private lateinit var service: ApiService
+    private lateinit var uploadValidator: Validator.Upload
 
     private val addStoryViewModel by viewModels<AddStoryViewModel>()
 
@@ -46,6 +52,7 @@ class AddStoryActivity : AppCompatActivity() {
         supportActionBar?.title = getString(R.string.add_story)
 
         service = ApiConfig.getApiClient(this)!!.create(ApiService::class.java)
+        uploadValidator = Validator.Upload()
 
         if (!allPermisionGranted()) {
             ActivityCompat.requestPermissions(
@@ -55,6 +62,7 @@ class AddStoryActivity : AppCompatActivity() {
             )
         }
 
+        setupViews()
         setOnClick()
         settingViewModel()
         subscribeViewModel()
@@ -87,29 +95,47 @@ class AddStoryActivity : AppCompatActivity() {
     private fun setOnClick() {
         binding.btnCamera.setOnClickListener { startCameraX() }
         binding.btnGallery.setOnClickListener { startGallery() }
-        binding.btnUpload.setOnClickListener { validation() }
+//        binding.btnUpload.setOnClickListener { validation() }
     }
 
-    private fun validation() {
-        val description = binding.descEditText.text.toString()
-        val stringDescription = getString(R.string.desc)
+    private fun setupViews() {
+        binding.apply {
+            descEditText.onTextChanged {
+                InitTextWatcher {
+                    uploadValidator.desc = it.isNotEmpty() && it.length >= 12
+                    btnUpload.isEnabled = uploadValidator.filled()
+                }
+            }
 
-        if (getFile == null) {
-            binding.tvErrorImage.visibility = View.VISIBLE
-            return
-        } else {
-            binding.tvErrorImage.visibility = View.GONE
+            btnUpload.onCLick {
+                addNewStory(descEditText.text.toString())
+            }
         }
-
-        if (description.isEmpty()) {
-            binding.etLayoutDescription.error = getString(R.string.error_empty_value, stringDescription)
-            return
-        } else {
-            binding.etLayoutDescription.error = null
-        }
-
-        addNewStory(description)
     }
+
+//    private fun validation() {
+//        val description = binding.descEditText.text.toString()
+//        val stringDescription = getString(R.string.desc)
+//
+//        if (getFile == null) {
+//            binding.tvErrorImage.visibility = View.VISIBLE
+//            return
+//        } else {
+//            binding.tvErrorImage.visibility = View.GONE
+//        }
+//
+//        if (description.isEmpty()) {
+//            binding.etLayoutDescription.error = getString(R.string.error_empty_value, stringDescription)
+//            return
+//        } else if (description.length < 12) {
+//            binding.etLayoutDescription.error = getString(R.string.error_empty_value, stringDescription)
+//            return
+//        } else {
+//            binding.etLayoutDescription.error = null
+//        }
+//
+//        addNewStory(description)
+//    }
 
     private fun addNewStory(desc: String) {
         val file = reduceFileImage(getFile as File)
@@ -162,6 +188,8 @@ class AddStoryActivity : AppCompatActivity() {
             myFile?.let { file ->
                 rotateFile(file, isBackCamera)
                 getFile = file
+                uploadValidator.image = true
+                binding.btnUpload.isEnabled = uploadValidator.filled()
                 binding.ivPreviewImage.setImageBitmap(BitmapFactory.decodeFile(file.path))
             }
         }
@@ -175,6 +203,8 @@ class AddStoryActivity : AppCompatActivity() {
             selectedImg.let { uri ->
                 val myFile = uriToFile(uri, this)
                 getFile = myFile
+                uploadValidator.image = true
+                binding.btnUpload.isEnabled = uploadValidator.filled()
                 binding.ivPreviewImage.setImageURI(uri)
             }
         }

@@ -13,10 +13,15 @@ import com.karsatech.storyapp.data.remote.retrofit.ApiConfig
 import com.karsatech.storyapp.data.remote.retrofit.ApiService
 import com.karsatech.storyapp.databinding.ActivityRegisterBinding
 import com.karsatech.storyapp.ui.auth.login.LoginActivity
+import com.karsatech.storyapp.utils.AppUtils
+import com.karsatech.storyapp.utils.Validator
+import com.karsatech.storyapp.utils.Views.onCLick
+import com.karsatech.storyapp.utils.Views.onTextChanged
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
     private lateinit var service: ApiService
+    private lateinit var registerValidator: Validator.Register
 
     private val registerViewModel by viewModels<RegisterViewModel>()
 
@@ -27,7 +32,9 @@ class RegisterActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         service = ApiConfig.getApiClient(this)!!.create(ApiService::class.java)
+        registerValidator = Validator.Register()
 
+        setupViews()
         setOnClick()
         settingViewModel()
         subscribeRegisterViewModel()
@@ -56,10 +63,6 @@ class RegisterActivity : AppCompatActivity() {
         binding.tvLogin.setOnClickListener {
             intentLogin()
         }
-
-        binding.btnRegister.setOnClickListener {
-            validation()
-        }
     }
 
     private fun intentLogin() {
@@ -73,55 +76,35 @@ class RegisterActivity : AppCompatActivity() {
         binding.progressBar.visibility = if (loading) View.VISIBLE else View.INVISIBLE
     }
 
-    private fun validation() {
-        val emailRegex = "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}".toRegex()
+    private fun setupViews() {
 
-        val name = binding.nameEditText.text.toString()
-        val email = binding.emailEditText.text.toString()
-        val password = binding.passwordEditText.text.toString()
+        binding.apply {
 
-        val nameString = getString(R.string.name)
-        val emailString = getString(R.string.email)
-        val passwordString = getString(R.string.password)
-
-        when {
-            name.isEmpty() -> {
-                binding.etLayoutName.error = getString(R.string.error_empty_value, nameString)
-                return
+            nameEditText.onTextChanged {
+                AppUtils.InitTextWatcher {
+                    registerValidator.name = it.isNotEmpty() && it.length >= 6
+                    btnRegister.isEnabled = registerValidator.filled()
+                }
             }
 
-            name.length < 6 -> {
-                binding.etLayoutName.error = getString(R.string.error_length, nameString, 6)
-                return
+            emailEditText.onTextChanged {
+                AppUtils.InitTextWatcher {
+                    registerValidator.email = it.isNotEmpty() && AppUtils.isEmailValid(it)
+                    btnRegister.isEnabled = registerValidator.filled()
+                }
             }
 
-            email.isEmpty() -> {
-                binding.etLayoutEmail.error = getString(R.string.error_empty_value, emailString)
-                return
+            passwordEditText.onTextChanged {
+                AppUtils.InitTextWatcher {
+                    registerValidator.password = it.isNotEmpty() && it.length >= 6
+                    btnRegister.isEnabled = registerValidator.filled()
+                }
             }
 
-            !email.matches(emailRegex) -> {
-                binding.etLayoutEmail.error = getString(R.string.error_email_format)
-                return
-            }
-
-            password.isEmpty() -> {
-                binding.etLayoutPassword.error =
-                    getString(R.string.error_empty_value, passwordString)
-                return
-            }
-
-            password.length < 8 -> {
-                binding.etLayoutPassword.error = getString(R.string.error_length, passwordString, 8)
-                return
-            }
-
-            else -> {
-                binding.etLayoutName.error = null
-                binding.etLayoutEmail.error = null
-                binding.etLayoutPassword.error = null
-
-                Log.d(TAG, "name: $name, email: $email, password: $password")
+            btnRegister.onCLick {
+                val name = nameEditText.text.toString()
+                val email = emailEditText.text.toString()
+                val password = passwordEditText.text.toString()
 
                 registerViewModel.registerUser(name, email, password)
             }

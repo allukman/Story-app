@@ -40,14 +40,12 @@
             android:layout_height="wrap_content"
             app:startIconDrawable="@drawable/ic_baseline_email_24">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <com.karsatech.storyapp.view.customview.CustomEditTextEmail
                 android:id="@+id/emailEditText"
                 style="@style/description"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/email"
-                android:inputType="textEmailAddress" />
+                android:layout_height="wrap_content"/>
+
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -59,32 +57,43 @@
             app:passwordToggleEnabled="true"
             app:startIconDrawable="@drawable/ic_baseline_lock_24">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <com.karsatech.storyapp.view.customview.CustomEditTextPassword
                 android:id="@+id/passwordEditText"
-                style="@style/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/password"
-                android:inputType="textPassword" />
+                style="@style/description"/>
+
         </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>
 
-    <Button
+<!--    <Button-->
+<!--        android:id="@+id/btn_login"-->
+<!--        style="@style/title"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="@dimen/dimen_16dp"-->
+<!--        android:background="@drawable/style_rounded_button"-->
+<!--        android:paddingHorizontal="@dimen/dimen_24dp"-->
+<!--        android:paddingVertical="@dimen/dimen_8dp"-->
+<!--        android:text="@string/login"-->
+<!--        android:textAllCaps="false"-->
+<!--        android:textColor="?colorOnBackground"-->
+<!--        app:layout_constraintRight_toRightOf="@id/layout_text_input"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/layout_text_input" />-->
+
+    <com.karsatech.storyapp.view.customview.CustomButton
         android:id="@+id/btn_login"
-        style="@style/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dimen_16dp"
-        android:background="@drawable/style_rounded_button"
+        android:text="@string/login"
+        android:enabled="false"
         android:paddingHorizontal="@dimen/dimen_24dp"
         android:paddingVertical="@dimen/dimen_8dp"
-        android:text="@string/login"
-        android:textAllCaps="false"
-        android:textColor="?colorOnBackground"
         app:layout_constraintRight_toRightOf="@id/layout_text_input"
-        app:layout_constraintTop_toBottomOf="@id/layout_text_input" />
+        app:layout_constraintTop_toBottomOf="@id/layout_text_input"
+        />
 
     <ProgressBar
         android:id="@+id/progress_bar"

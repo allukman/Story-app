@@ -11,19 +11,24 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
-import com.karsatech.storyapp.R
 import com.karsatech.storyapp.data.remote.retrofit.ApiConfig
 import com.karsatech.storyapp.data.remote.retrofit.ApiService
 import com.karsatech.storyapp.databinding.ActivityLoginBinding
 import com.karsatech.storyapp.ui.ViewModelFactory
 import com.karsatech.storyapp.ui.auth.register.RegisterActivity
 import com.karsatech.storyapp.ui.story.main.MainActivity
+import com.karsatech.storyapp.utils.AppUtils.InitTextWatcher
+import com.karsatech.storyapp.utils.AppUtils.isEmailValid
 import com.karsatech.storyapp.utils.UserPreference
+import com.karsatech.storyapp.utils.Validator
+import com.karsatech.storyapp.utils.Views.onCLick
+import com.karsatech.storyapp.utils.Views.onTextChanged
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var service: ApiService
+    private lateinit var loginValidator: Validator.Login
 
     private val viewModelFactory: ViewModelProvider.Factory by lazy {
         ViewModelFactory(UserPreference.getInstance(application.dataStore))
@@ -38,7 +43,9 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         service = ApiConfig.getApiClient(this)!!.create(ApiService::class.java)
+        loginValidator = Validator.Login()
 
+        setupViews()
         setOnClick()
         settingViewModel()
         subscribeLoginViewModel()
@@ -75,42 +82,25 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun validation() {
-        val emailRegex = "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}".toRegex()
+    private fun setupViews() {
 
-        val email = binding.emailEditText.text.toString()
-        val password = binding.passwordEditText.text.toString()
-
-        val emailString = getString(R.string.email)
-        val passwordString = getString(R.string.password)
-
-        when {
-            email.isEmpty() -> {
-                binding.etLayoutEmail.error = getString(R.string.error_empty_value, emailString)
-                return
+        binding.apply {
+            emailEditText.onTextChanged {
+                InitTextWatcher {
+                    loginValidator.email = it.isNotEmpty() && isEmailValid(it)
+                    btnLogin.isEnabled = loginValidator.filled()
+                }
             }
 
-            !email.matches(emailRegex) -> {
-                binding.etLayoutEmail.error = getString(R.string.error_email_format)
-                return
+            passwordEditText.onTextChanged {
+                InitTextWatcher {
+                    loginValidator.password = it.isNotEmpty() && it.length >= 6
+                    btnLogin.isEnabled = loginValidator.filled()
+                }
             }
 
-            password.isEmpty() -> {
-                binding.etLayoutPassword.error =
-                    getString(R.string.error_empty_value, passwordString)
-                return
-            }
-
-            password.length < 8 -> {
-                binding.etLayoutPassword.error = getString(R.string.error_length, passwordString, 8)
-                return
-            }
-
-            else -> {
-                binding.etLayoutEmail.error = null
-                binding.etLayoutPassword.error = null
-
-                loginViewModel.loginUser(email, password)
+            btnLogin.onCLick {
+                loginViewModel.loginUser(emailEditText.text.toString(), passwordEditText.text.toString())
             }
         }
     }
@@ -122,15 +112,16 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun setOnClick() {
-        binding.tvRegister.setOnClickListener {
+        binding.tvRegister.onCLick {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
             finish()
         }
 
-        binding.btnLogin.setOnClickListener {
-            validation()
-        }
+//        binding.btnLogin.onCLick {
+//            Toast.makeText(this, "Clicked!", Toast.LENGTH_SHORT).show()
+////            validation()
+//        }
 
     }
 
