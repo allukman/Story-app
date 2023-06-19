@@ -6,8 +6,16 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Environment
+import android.view.View
+import android.widget.ImageView
+import android.widget.ProgressBar
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.karsatech.storyapp.R
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -83,4 +91,34 @@ fun uriToFile(selectedImg: Uri, context: Context): File {
     inputStream.close()
 
     return myFile
+}
+
+fun ImageView.loadImage(url : String?, context : Context, progressBar : ProgressBar) {
+    Glide.with(context)
+        .load(url)
+        .listener(object : RequestListener<Drawable> {
+            override fun onLoadFailed(
+                e: GlideException?,
+                model: Any?,
+                target: com.bumptech.glide.request.target.Target<Drawable>?,
+                isFirstResource: Boolean
+            ): Boolean {
+                progressBar.visibility = View.GONE
+                return false                        }
+
+            override fun onResourceReady(
+                resource: Drawable?,
+                model: Any?,
+                target: com.bumptech.glide.request.target.Target<Drawable>?,
+                dataSource: DataSource?,
+                isFirstResource: Boolean
+            ): Boolean {
+                progressBar.visibility = View.GONE
+                return false                        }
+
+        })
+        .placeholder(R.drawable.grey_background)
+        .error(R.drawable.grey_background)
+        .dontAnimate()
+        .into(this)
 }

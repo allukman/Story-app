@@ -37,7 +37,17 @@
             android:scaleType="centerCrop"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toBottomOf="@id/nameTextView"
-            tools:src="@tools:sample/avatars" />
+            />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateTint="@color/elm"
+            card_view:layout_constraintLeft_toLeftOf="@id/profileImageView"
+            card_view:layout_constraintRight_toRightOf="@id/profileImageView"
+            card_view:layout_constraintTop_toTopOf="@id/profileImageView"
+            card_view:layout_constraintBottom_toBottomOf="@id/profileImageView"/>
 
         <TextView
             android:id="@+id/descTextView"

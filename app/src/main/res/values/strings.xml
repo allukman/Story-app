@@ -9,17 +9,20 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="name">Name</string>
-<!--    <style name="description">Description</style>-->
+    <string name="desc">Description</string>
 
     <string name="gallery">Gallery</string>
     <string name="camera">Camera</string>
     <string name="upload">Upload</string>
 
-
     <string name="sign_up">Sign up</string>
     <string name="sign_in">Sign in</string>
     <string name="dont_have_an_account">Don\'t have an account? </string>
     <string name="already_have_an_account">Already have an account?</string>
+
+    <string name="list_story">List Story</string>
+    <string name="language">Language</string>
+    <string name="add_story">Create new story</string>
 
     <!--    Content Description   -->
 
@@ -35,6 +38,6 @@
     <string name="error_length">%1$s must be at least %2$d characters long</string>
     <string name="error_email_format">Please enter a valid email</string>
     <string name="image_cant_be_empty">Image can\'t be empty</string>
-    <string name="list_story">List Story</string>
+
 
 </resources>

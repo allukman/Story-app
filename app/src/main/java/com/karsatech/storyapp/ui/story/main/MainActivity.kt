@@ -4,7 +4,9 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.datastore.core.DataStore
@@ -47,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         setOnClick()
         settingViewModel()
         setupRecyclerView()
-        subscribeLoginViewModel()
+        subscribeMainViewModel()
 
     }
 
@@ -63,10 +65,19 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun subscribeLoginViewModel() {
+    private fun subscribeMainViewModel() {
         mainViewModel.stories.observe(this) { stories ->
             setGithubData(stories)
         }
+
+        mainViewModel.isLoading.observe(this) { isLoading ->
+            showLoading(isLoading)
+        }
+    }
+
+    private fun showLoading(loading: Boolean) {
+        binding.rvStory.visibility = if (loading) View.GONE else View.VISIBLE
+        binding.progressBar.visibility = if (loading) View.VISIBLE else View.GONE
     }
 
     private fun settingViewModel() {
@@ -82,6 +93,10 @@ class MainActivity : AppCompatActivity() {
                 R.id.logout -> {
                     mainViewModel.logout()
                     intentWelcome()
+                    true
+                }
+                R.id.language -> {
+                    startActivity(Intent(Settings.ACTION_LOCALE_SETTINGS))
                     true
                 }
                 else -> false

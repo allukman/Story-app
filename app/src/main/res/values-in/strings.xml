@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">StoryApp</string>
+
+    <string name="login">Masuk</string>
+    <string name="register">Daftar</string>
+    <string name="welcome">Selamat Datang</string>
+    <string name="logout">Keluar</string>
+
+    <string name="email">Email</string>
+    <string name="password">Kata sandi</string>
+    <string name="name">Nama</string>
+    <string name="desc">Deskripsi</string>
+
+    <string name="gallery">Galeri</string>
+    <string name="camera">Kamera</string>
+    <string name="upload">Unggah</string>
+
+
+    <string name="sign_up">Daftar</string>
+    <string name="sign_in">Sign in</string>
+    <string name="dont_have_an_account">Belum punya akun? </string>
+    <string name="already_have_an_account">Sudah punya akun?</string>
+
+    <string name="list_story">Daftar Cerita</string>
+    <string name="language">Bahasa</string>
+    <string name="add_story">Buat cerita baru</string>
+
+    <!--    Content Description   -->
+
+    <string name="desc_image_welcome">Gambar selamat datang</string>
+    <string name="desc_image_login">Gambar masuk akun</string>
+    <string name="desc_image_register">Gambar daftar akun</string>
+    <string name="desc_add_new_story">Tambah cerita Baru</string>
+    <string name="image_profile">Gambar profile</string>
+
+    <!--    Error String    -->
+
+    <string name="error_empty_value">%s tidak boleh kosong</string>
+    <string name="error_length">%1$s setidaknya memiliki panjang %2$d karakter</string>
+    <string name="error_email_format">Mohon masukan email yang valid</string>
+    <string name="image_cant_be_empty">Gambar tidak boleh kosong</string>
+
+</resources>

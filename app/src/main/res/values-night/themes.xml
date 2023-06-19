@@ -9,33 +9,33 @@
         <!--        <item name="colorAccent">@color/elm</item>-->
     </style>
 
-<!--    <style name="big_title">-->
-<!--        <item name="android:fontFamily">@font/nunito_bold</item>-->
-<!--        <item name="android:textSize">36sp</item>-->
-<!--        <item name="android:textColor">@color/white</item>-->
-<!--    </style>-->
+    <style name="big_title">
+        <item name="android:fontFamily">@font/nunito_bold</item>
+        <item name="android:textSize">36sp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
 
-<!--    <style name="title">-->
-<!--        <item name="android:fontFamily">@font/nunito_bold</item>-->
-<!--        <item name="android:textSize">20sp</item>-->
-<!--        <item name="android:textColor">@color/white</item>-->
-<!--    </style>-->
+    <style name="title">
+        <item name="android:fontFamily">@font/nunito_bold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
 
-<!--    <style name="date">-->
-<!--        <item name="android:fontFamily">@font/nunito_regular</item>-->
-<!--        <item name="android:textSize">14sp</item>-->
-<!--        <item name="android:textColor">@color/gray</item>-->
-<!--    </style>-->
+    <style name="date">
+        <item name="android:fontFamily">@font/nunito_regular</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/gray</item>
+    </style>
 
-<!--    <style name="description">-->
-<!--        <item name="android:fontFamily">@font/nunito_regular</item>-->
-<!--        <item name="android:textSize">14sp</item>-->
-<!--        <item name="android:textColor">@color/white</item>-->
-<!--    </style>-->
+    <style name="description">
+        <item name="android:fontFamily">@font/nunito_regular</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
 
-<!--    <style name="description_secondary">-->
-<!--        <item name="android:fontFamily">@font/nunito_regular</item>-->
-<!--        <item name="android:textSize">14sp</item>-->
-<!--        <item name="android:textColor">@color/elm</item>-->
-<!--    </style>-->
+    <style name="description_secondary">
+        <item name="android:fontFamily">@font/nunito_regular</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/elm</item>
+    </style>
 </resources>

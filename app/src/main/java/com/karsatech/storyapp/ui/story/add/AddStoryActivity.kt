@@ -8,26 +8,44 @@ import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.karsatech.storyapp.R
+import com.karsatech.storyapp.data.remote.retrofit.ApiConfig
+import com.karsatech.storyapp.data.remote.retrofit.ApiService
 import com.karsatech.storyapp.databinding.ActivityAddStoryBinding
 import com.karsatech.storyapp.ui.camera.CameraActivity
+import com.karsatech.storyapp.ui.story.main.MainActivity
+import com.karsatech.storyapp.utils.reduceFileImage
 import com.karsatech.storyapp.utils.rotateFile
 import com.karsatech.storyapp.utils.uriToFile
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 
 class AddStoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddStoryBinding
     private var getFile: File? = null
+    private lateinit var service: ApiService
+
+    private val addStoryViewModel by viewModels<AddStoryViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddStoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = getString(R.string.add_story)
+
+        service = ApiConfig.getApiClient(this)!!.create(ApiService::class.java)
 
         if (!allPermisionGranted()) {
             ActivityCompat.requestPermissions(
@@ -37,36 +55,79 @@ class AddStoryActivity : AppCompatActivity() {
             )
         }
 
-        binding.btnCamera.setOnClickListener {
-            startCameraX()
+        setOnClick()
+        settingViewModel()
+        subscribeViewModel()
+
+    }
+
+    private fun showLoading(loading: Boolean) {
+        binding.btnUpload.visibility = if (loading) View.GONE else View.VISIBLE
+        binding.progressBar.visibility = if (loading) View.VISIBLE else View.INVISIBLE
+    }
+
+    private fun subscribeViewModel() {
+        addStoryViewModel.success.observe(this) { data ->
+            if (!data.error) {
+                intentToMainActivity()
+            }
+            Toast.makeText(this, data.message, Toast.LENGTH_SHORT).show()
         }
 
-        binding.btnGallery.setOnClickListener {
-            startGallery()
+        addStoryViewModel.isLoading.observe(this) { loading ->
+            showLoading(loading)
         }
+    }
 
+    private fun intentToMainActivity() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finishAffinity()
+    }
+    private fun setOnClick() {
+        binding.btnCamera.setOnClickListener { startCameraX() }
+        binding.btnGallery.setOnClickListener { startGallery() }
+        binding.btnUpload.setOnClickListener { validation() }
     }
 
     private fun validation() {
         val description = binding.descEditText.text.toString()
-//        val stringDescription = getString(R.string.description)
-        val stringDescription = "Description"
+        val stringDescription = getString(R.string.desc)
 
         if (getFile == null) {
             binding.tvErrorImage.visibility = View.VISIBLE
             return
+        } else {
+            binding.tvErrorImage.visibility = View.GONE
         }
 
         if (description.isEmpty()) {
             binding.etLayoutDescription.error = getString(R.string.error_empty_value, stringDescription)
             return
+        } else {
+            binding.etLayoutDescription.error = null
         }
 
         addNewStory(description)
     }
 
     private fun addNewStory(desc: String) {
-//        Toast.makeText(this, "desc")
+        val file = reduceFileImage(getFile as File)
+        val description = desc.toRequestBody("text/plain".toMediaType())
+        val reqImgFile = file.asRequestBody("image/jpeg".toMediaType())
+        val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
+            "photo",
+            file.name,
+            reqImgFile
+        )
+
+        addStoryViewModel.addStory(photo = imageMultipart, description)
+    }
+
+    private fun settingViewModel() {
+        addStoryViewModel.apply {
+            setService(service)
+        }
     }
 
     private fun startCameraX() {
@@ -134,6 +195,16 @@ class AddStoryActivity : AppCompatActivity() {
                 ).show()
                 finish()
             }
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

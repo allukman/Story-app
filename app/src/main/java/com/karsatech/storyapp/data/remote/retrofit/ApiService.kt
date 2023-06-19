@@ -34,9 +34,9 @@ interface ApiService {
     fun getAllStories(): Call<StoryResponse>
 
     @Multipart
-    @POST("v1/stories/guest")
-    fun uploadImage(
-        @Part file: MultipartBody.Part,
+    @POST("stories")
+    fun addNewStory(
+        @Part photo: MultipartBody.Part,
         @Part("description") description: RequestBody,
     ): Call<RegisterResponse>
 }
