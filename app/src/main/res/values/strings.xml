@@ -31,6 +31,10 @@
     <string name="desc_image_register">Image Register</string>
     <string name="desc_add_new_story">Add new story</string>
     <string name="image_profile">Image Profile</string>
+    <string name="desc_back_button_from_detail_image">Back button from detail image</string>
+    <string name="desc_detail_image">Detail image</string>
+    <string name="desc_capture_image">Capture Image</string>
+
 
     <!--    Error String    -->
 
@@ -38,6 +42,10 @@
     <string name="error_length">%1$s must be at least %2$d characters long</string>
     <string name="error_email_format">Please enter a valid email</string>
     <string name="image_cant_be_empty">Image can\'t be empty</string>
+    <string name="failed_open_camera">Failed to open the camera</string>
+    <string name="failed_to_capture">Failed to take a photo</string>
+    <string name="not_getting_permission">Not getting permission</string>
+
 
 
 </resources>

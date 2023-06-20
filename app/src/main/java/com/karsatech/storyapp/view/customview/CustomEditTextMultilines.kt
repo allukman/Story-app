@@ -40,7 +40,7 @@ class CustomEditTextMultilines : AppCompatEditText {
             AppUtils.InitTextWatcher {
                 when {
                     it.isEmpty() -> error = context.getString(R.string.error_empty_value, txtString)
-                    it.length < 6 -> error = context.getString(R.string.error_length, txtString, 12)
+                    it.length < 12 -> error = context.getString(R.string.error_length, txtString, 12)
                 }
             }
         }

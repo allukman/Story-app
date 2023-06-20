@@ -15,6 +15,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.karsatech.storyapp.R
 import com.karsatech.storyapp.data.remote.retrofit.ApiConfig
 import com.karsatech.storyapp.data.remote.retrofit.ApiService
@@ -69,8 +70,8 @@ class AddStoryActivity : AppCompatActivity() {
     }
 
     private fun showLoading(loading: Boolean) {
-        binding.btnUpload.visibility = if (loading) View.GONE else View.VISIBLE
-        binding.progressBar.visibility = if (loading) View.VISIBLE else View.INVISIBLE
+        binding.btnUpload.isVisible = !loading
+        binding.progressBar.isVisible = loading
     }
 
     private fun subscribeViewModel() {
@@ -94,7 +95,6 @@ class AddStoryActivity : AppCompatActivity() {
     private fun setOnClick() {
         binding.btnCamera.setOnClickListener { startCameraX() }
         binding.btnGallery.setOnClickListener { startGallery() }
-//        binding.btnUpload.setOnClickListener { validation() }
     }
 
     private fun setupViews() {
@@ -111,30 +111,6 @@ class AddStoryActivity : AppCompatActivity() {
             }
         }
     }
-
-//    private fun validation() {
-//        val description = binding.descEditText.text.toString()
-//        val stringDescription = getString(R.string.desc)
-//
-//        if (getFile == null) {
-//            binding.tvErrorImage.visibility = View.VISIBLE
-//            return
-//        } else {
-//            binding.tvErrorImage.visibility = View.GONE
-//        }
-//
-//        if (description.isEmpty()) {
-//            binding.etLayoutDescription.error = getString(R.string.error_empty_value, stringDescription)
-//            return
-//        } else if (description.length < 12) {
-//            binding.etLayoutDescription.error = getString(R.string.error_empty_value, stringDescription)
-//            return
-//        } else {
-//            binding.etLayoutDescription.error = null
-//        }
-//
-//        addNewStory(description)
-//    }
 
     private fun addNewStory(desc: String) {
         val file = reduceFileImage(getFile as File)
@@ -177,12 +153,12 @@ class AddStoryActivity : AppCompatActivity() {
     ) {
         if (it.resultCode == CAMERA_X_RESULT) {
             val myFile = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                it.data?.getSerializableExtra("picture", File::class.java)
+                it.data?.getSerializableExtra(PICTURE, File::class.java)
             } else {
                 @Suppress("DEPRECATION")
-                it.data?.getSerializableExtra("picture")
+                it.data?.getSerializableExtra(PICTURE)
             } as? File
-            val isBackCamera = it.data?.getBooleanExtra("isBackCamera", true) as Boolean
+            val isBackCamera = it.data?.getBooleanExtra(BACK_CAMERA, true) as Boolean
 
             myFile?.let { file ->
                 rotateFile(file, isBackCamera)
@@ -219,7 +195,7 @@ class AddStoryActivity : AppCompatActivity() {
             if (!allPermisionGranted()) {
                 Toast.makeText(
                     this,
-                    "Tidak mendapatkan izin",
+                    getString(R.string.not_getting_permission),
                     Toast.LENGTH_SHORT
                 ).show()
                 finish()
@@ -230,7 +206,7 @@ class AddStoryActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -244,5 +220,8 @@ class AddStoryActivity : AppCompatActivity() {
         private const val REQUEST_CODE_PERMISSIONS = 10
 
         private val TAG = AddStoryActivity::class.java.simpleName
+
+        const val PICTURE = "picture"
+        const val BACK_CAMERA = "isBackCamera"
     }
 }

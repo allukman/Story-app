@@ -37,7 +37,7 @@ class CustomEditTextPassword : AppCompatEditText {
             AppUtils.InitTextWatcher {
                 when {
                     it.isEmpty() -> error = context.getString(R.string.error_empty_value, txtString)
-                    it.length < 6 -> error = context.getString(R.string.error_length, txtString, 6)
+                    it.length < 8 -> error = context.getString(R.string.error_length, txtString, 8)
                 }
             }
         }

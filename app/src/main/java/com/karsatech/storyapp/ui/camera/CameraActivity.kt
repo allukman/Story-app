@@ -13,8 +13,10 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import com.karsatech.storyapp.R
 import com.karsatech.storyapp.databinding.ActivityCameraBinding
 import com.karsatech.storyapp.ui.story.add.AddStoryActivity
+import com.karsatech.storyapp.ui.story.main.MainActivity
 import com.karsatech.storyapp.utils.createFile
 
 class CameraActivity : AppCompatActivity() {
@@ -50,8 +52,8 @@ class CameraActivity : AppCompatActivity() {
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                     val intent = Intent()
-                    intent.putExtra("picture", photoFile)
-                    intent.putExtra("isBackCamera", cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA)
+                    intent.putExtra(AddStoryActivity.PICTURE, photoFile)
+                    intent.putExtra(AddStoryActivity.BACK_CAMERA, cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA)
                     setResult(AddStoryActivity.CAMERA_X_RESULT, intent)
                     finish()
                 }
@@ -59,7 +61,7 @@ class CameraActivity : AppCompatActivity() {
                 override fun onError(exception: ImageCaptureException) {
                     Toast.makeText(
                         this@CameraActivity,
-                        "Gagal mengambil gambar.",
+                        getString(R.string.failed_to_capture),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -97,7 +99,7 @@ class CameraActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 Toast.makeText(
                     this@CameraActivity,
-                    "Gagal Memunculkan Kamera.",
+                    getString(R.string.failed_open_camera),
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -105,7 +107,6 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun hideSystemUI() {
-        @Suppress("DEPRECATION")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.hide(WindowInsets.Type.statusBars())
         } else {

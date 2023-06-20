@@ -1,11 +1,13 @@
 package com.karsatech.storyapp.ui.story.detail
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import com.bumptech.glide.Glide
 import com.karsatech.storyapp.data.remote.response.DetailStory
 import com.karsatech.storyapp.databinding.ActivityDetailStoryBinding
+import com.karsatech.storyapp.utils.Views.onCLick
 import com.karsatech.storyapp.utils.withDateFormat
 
 class DetailStoryActivity : AppCompatActivity() {
@@ -20,6 +22,8 @@ class DetailStoryActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
         setupData()
+
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -43,5 +47,11 @@ class DetailStoryActivity : AppCompatActivity() {
         binding.dateTextView.text = data.createdAt.withDateFormat()
 
         supportActionBar?.title = data.name
+
+        binding.profileImageView.onCLick {
+            val intent = Intent(this, DetailImageActivity::class.java)
+            intent.putExtra("STORY", data)
+            startActivity(intent)
+        }
     }
 }

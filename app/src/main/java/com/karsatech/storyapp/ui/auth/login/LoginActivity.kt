@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -56,8 +57,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun showLoading(loading: Boolean) {
-        binding.btnLogin.visibility = if (loading) View.GONE else View.VISIBLE
-        binding.progressBar.visibility = if (loading) View.VISIBLE else View.INVISIBLE
+        binding.btnLogin.isVisible = !loading
+        binding.progressBar.isVisible = loading
     }
 
     private fun subscribeLoginViewModel() {
@@ -114,7 +115,7 @@ class LoginActivity : AppCompatActivity() {
 
             passwordEditText.onTextChanged {
                 InitTextWatcher {
-                    loginValidator.password = it.isNotEmpty() && it.length >= 6
+                    loginValidator.password = it.isNotEmpty() && it.length >= 8
                     btnLogin.isEnabled = loginValidator.filled()
                 }
             }
@@ -137,12 +138,6 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-
-//        binding.btnLogin.onCLick {
-//            Toast.makeText(this, "Clicked!", Toast.LENGTH_SHORT).show()
-////            validation()
-//        }
-
     }
 
     companion object {

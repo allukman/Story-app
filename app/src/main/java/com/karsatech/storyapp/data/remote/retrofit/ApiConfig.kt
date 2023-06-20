@@ -1,6 +1,7 @@
 package com.karsatech.storyapp.data.remote.retrofit
 
 import android.content.Context
+import com.karsatech.storyapp.ui.auth.login.LoginActivity
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

@@ -29,17 +29,4 @@ class HeaderInterceptor(private val context : Context) : Interceptor {
 
         chain.proceed(request)
     }
-//    override fun intercept(chain: Interceptor.Chain): Response = chain.run {
-//
-//        val token = userPreference.getToken().first()
-//
-//
-//        proceed(
-//            request().newBuilder()
-//                .addHeader("Authorization", "Bearer ")
-//                .header("Connection", "close")
-//                .removeHeader("Content-Length")
-//                .build()
-//        )
-//    }
 }

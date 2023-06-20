@@ -7,6 +7,7 @@ import android.provider.Settings
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -71,8 +72,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showLoading(loading: Boolean) {
-        binding.rvStory.visibility = if (loading) View.GONE else View.VISIBLE
-        binding.progressBar.visibility = if (loading) View.VISIBLE else View.GONE
+        binding.rvStory.isVisible = !loading
+        binding.progressBar.isVisible = loading
     }
 
     private fun settingViewModel() {

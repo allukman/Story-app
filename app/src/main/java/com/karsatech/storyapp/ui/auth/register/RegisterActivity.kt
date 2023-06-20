@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.karsatech.storyapp.data.remote.retrofit.ApiConfig
 import com.karsatech.storyapp.data.remote.retrofit.ApiService
 import com.karsatech.storyapp.databinding.ActivityRegisterBinding
@@ -89,9 +90,9 @@ class RegisterActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun showLoading (loading: Boolean) {
-        binding.btnRegister.visibility = if (loading) View.GONE else View.VISIBLE
-        binding.progressBar.visibility = if (loading) View.VISIBLE else View.INVISIBLE
+    private fun showLoading(loading: Boolean) {
+        binding.btnRegister.isVisible = !loading
+        binding.progressBar.isVisible = loading
     }
 
     private fun setupViews() {
@@ -114,7 +115,7 @@ class RegisterActivity : AppCompatActivity() {
 
             passwordEditText.onTextChanged {
                 AppUtils.InitTextWatcher {
-                    registerValidator.password = it.isNotEmpty() && it.length >= 6
+                    registerValidator.password = it.isNotEmpty() && it.length >= 8
                     btnRegister.isEnabled = registerValidator.filled()
                 }
             }

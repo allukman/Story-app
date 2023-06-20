@@ -32,6 +32,9 @@
     <string name="desc_image_register">Gambar daftar akun</string>
     <string name="desc_add_new_story">Tambah cerita Baru</string>
     <string name="image_profile">Gambar profile</string>
+    <string name="desc_back_button_from_detail_image">Tombol kembali dari detail gambar</string>
+    <string name="desc_detail_image">Detail gambar</string>
+    <string name="desc_capture_image">Tangkap gambar</string>
 
     <!--    Error String    -->
 
@@ -39,5 +42,8 @@
     <string name="error_length">%1$s setidaknya memiliki panjang %2$d karakter</string>
     <string name="error_email_format">Mohon masukan email yang valid</string>
     <string name="image_cant_be_empty">Gambar tidak boleh kosong</string>
+    <string name="failed_open_camera">Gagal memunculkan kamera</string>
+    <string name="failed_to_capture">Gagal mengambil gambar</string>
+    <string name="not_getting_permission">Tidak mendapatkan izin</string>
 
 </resources>
