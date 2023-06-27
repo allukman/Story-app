@@ -16,7 +16,6 @@ import androidx.core.content.ContextCompat
 import com.karsatech.storyapp.R
 import com.karsatech.storyapp.databinding.ActivityCameraBinding
 import com.karsatech.storyapp.ui.story.add.AddStoryActivity
-import com.karsatech.storyapp.ui.story.main.MainActivity
 import com.karsatech.storyapp.utils.createFile
 
 class CameraActivity : AppCompatActivity() {

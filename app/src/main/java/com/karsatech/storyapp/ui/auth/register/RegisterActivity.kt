@@ -2,6 +2,7 @@ package com.karsatech.storyapp.ui.auth.register
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -9,21 +10,30 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import com.karsatech.storyapp.data.remote.retrofit.ApiConfig
-import com.karsatech.storyapp.data.remote.retrofit.ApiService
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.ViewModelProvider
+import com.karsatech.storyapp.data.remote.Result
 import com.karsatech.storyapp.databinding.ActivityRegisterBinding
+import com.karsatech.storyapp.ui.ViewModelFactory
 import com.karsatech.storyapp.ui.auth.login.LoginActivity
 import com.karsatech.storyapp.utils.AppUtils
+import com.karsatech.storyapp.utils.UserPreference
 import com.karsatech.storyapp.utils.Validator
 import com.karsatech.storyapp.utils.Views.onCLick
 import com.karsatech.storyapp.utils.Views.onTextChanged
 
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
-    private lateinit var service: ApiService
     private lateinit var registerValidator: Validator.Register
 
-    private val registerViewModel by viewModels<RegisterViewModel>()
+    private val viewModelFactory: ViewModelProvider.Factory by lazy {
+        ViewModelFactory(UserPreference.getInstance(application.dataStore), this)
+    }
+
+    private val registerViewModel: RegisterViewModel by viewModels { viewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,14 +41,12 @@ class RegisterActivity : AppCompatActivity() {
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        service = ApiConfig.getApiClient(this)!!.create(ApiService::class.java)
         registerValidator = Validator.Register()
 
         playAnimation()
         setupViews()
         setOnClick()
-        settingViewModel()
-        subscribeRegisterViewModel()
+
     }
 
     private fun playAnimation() {
@@ -56,25 +64,6 @@ class RegisterActivity : AppCompatActivity() {
         AnimatorSet().apply {
             playSequentially(name, email, password, register)
             start()
-        }
-    }
-
-    private fun subscribeRegisterViewModel() {
-        registerViewModel.register.observe(this) { data ->
-            if (!data.error) {
-                intentLogin()
-            }
-            Toast.makeText(this, data.message, Toast.LENGTH_SHORT).show()
-        }
-
-        registerViewModel.isLoading.observe(this) { loading ->
-            showLoading(loading)
-        }
-    }
-
-    private fun settingViewModel() {
-        registerViewModel.apply {
-            setService(service)
         }
     }
 
@@ -125,7 +114,28 @@ class RegisterActivity : AppCompatActivity() {
                 val email = emailEditText.text.toString()
                 val password = passwordEditText.text.toString()
 
-                registerViewModel.registerUser(name, email, password)
+                register(name, email, password)
+            }
+        }
+    }
+
+    private fun register(name: String, email: String, password: String) {
+        registerViewModel.register(name, email, password).observe(this) { result ->
+            if (result != null) {
+                when(result) {
+                    is Result.Success -> {
+                        showLoading(false)
+                        intentLogin()
+                        Toast.makeText(this, result.data.message, Toast.LENGTH_SHORT).show()
+                    }
+                    is Result.Loading -> {
+                        showLoading(true)
+                    }
+                    is Result.Error -> {
+                        showLoading(false)
+                        Toast.makeText(this, result.error, Toast.LENGTH_LONG).show()
+                    }
+                }
             }
         }
     }

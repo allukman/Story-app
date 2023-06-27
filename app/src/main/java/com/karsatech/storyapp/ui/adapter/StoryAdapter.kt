@@ -3,8 +3,8 @@ package com.karsatech.storyapp.ui.adapter
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.karsatech.storyapp.data.remote.response.DetailStory
 import com.karsatech.storyapp.databinding.ItemStoryBinding
@@ -12,7 +12,7 @@ import com.karsatech.storyapp.ui.story.detail.DetailStoryActivity
 import com.karsatech.storyapp.utils.loadImage
 import com.karsatech.storyapp.utils.withCurrentDateFormat
 
-class StoryAdapter : ListAdapter<DetailStory, StoryAdapter.RecyclerViewHolder>(DIFF_CALLBACK){
+class StoryAdapter : PagingDataAdapter<DetailStory, StoryAdapter.RecyclerViewHolder>(DIFF_CALLBACK){
 
     companion object {
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<DetailStory>() {
@@ -36,9 +36,8 @@ class StoryAdapter : ListAdapter<DetailStory, StoryAdapter.RecyclerViewHolder>(D
         RecyclerView.ViewHolder(bind.root) {
         fun bind(data: DetailStory) {
             bind.nameTextView.text = data.name
-            bind.descTextView.text = data.description
             bind.dateTextView.text = data.createdAt.withCurrentDateFormat()
-            bind.profileImageView.loadImage(data.photoUrl, itemView.context, bind.progressBar)
+            bind.ivImage.loadImage(data.photoUrl, itemView.context, bind.progressBar)
 
             itemView.setOnClickListener {
                 val intent = Intent(itemView.context, DetailStoryActivity::class.java)
@@ -54,6 +53,9 @@ class StoryAdapter : ListAdapter<DetailStory, StoryAdapter.RecyclerViewHolder>(D
     }
 
     override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        val data = getItem(position)
+        if (data != null) {
+            holder.bind(data)
+        }
     }
 }

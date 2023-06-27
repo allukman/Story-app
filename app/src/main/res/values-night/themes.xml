@@ -4,6 +4,7 @@
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
         <item name="colorPrimary">@color/elm</item>
+        <item name="background">@color/white</item>
         <!--        <item name="colorOnBackground">@color/black</item>-->
         <!--        <item name="colorSurface">@color/white</item>-->
         <!--        <item name="colorAccent">@color/elm</item>-->

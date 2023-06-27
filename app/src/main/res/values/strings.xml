@@ -22,7 +22,16 @@
 
     <string name="list_story">List Story</string>
     <string name="language">Language</string>
+    <string name="map">Story Map</string>
     <string name="add_story">Create new story</string>
+
+    <string name="good_morning">Good Morning</string>
+    <string name="good_afternoon">Good Afternoon</string>
+    <string name="good_evening">Good Evening</string>
+    <string name="good_night">Good Night</string>
+    <string name="hello">Hello</string>
+
+    <string name="get_my_last_location">Get my last location?</string>
 
     <!--    Content Description   -->
 
@@ -32,9 +41,10 @@
     <string name="desc_add_new_story">Add new story</string>
     <string name="image_profile">Image Profile</string>
     <string name="desc_back_button_from_detail_image">Back button from detail image</string>
+    <string name="desc_setting_button">Setting button</string>
     <string name="desc_detail_image">Detail image</string>
     <string name="desc_capture_image">Capture Image</string>
-
+    <string name="desc_map_button">map button</string>
 
     <!--    Error String    -->
 
@@ -45,6 +55,7 @@
     <string name="failed_open_camera">Failed to open the camera</string>
     <string name="failed_to_capture">Failed to take a photo</string>
     <string name="not_getting_permission">Not getting permission</string>
+    <string name="text_error">Error : %s</string>
 
 
 

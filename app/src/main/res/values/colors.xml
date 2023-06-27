@@ -7,5 +7,6 @@
     <color name="elm_secondary">#5AA7BF</color>
 
     <color name="gray">#808080</color>
+    <color name="light_grey">#B8AEAE</color>
     <color name="red">#FFFF0000</color>
 </resources>

@@ -2,35 +2,36 @@ package com.karsatech.storyapp.ui.story.main
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.view.View
+import android.widget.PopupMenu
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.karsatech.storyapp.R
-import com.karsatech.storyapp.data.remote.response.DetailStory
-import com.karsatech.storyapp.data.remote.retrofit.ApiConfig
-import com.karsatech.storyapp.data.remote.retrofit.ApiService
 import com.karsatech.storyapp.databinding.ActivityMainBinding
 import com.karsatech.storyapp.ui.ViewModelFactory
+import com.karsatech.storyapp.ui.adapter.LoadingStateAdapter
 import com.karsatech.storyapp.ui.adapter.StoryAdapter
+import com.karsatech.storyapp.ui.map.MapsActivity
 import com.karsatech.storyapp.ui.story.add.AddStoryActivity
 import com.karsatech.storyapp.ui.welcome.WelcomeActivity
+import com.karsatech.storyapp.utils.AppUtils
 import com.karsatech.storyapp.utils.UserPreference
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var service: ApiService
 
+    private lateinit var adapter: StoryAdapter
     private val viewModelFactory: ViewModelProvider.Factory by lazy {
-        ViewModelFactory(UserPreference.getInstance(application.dataStore))
+        ViewModelFactory(UserPreference.getInstance(application.dataStore),this)
     }
 
     private val mainViewModel: MainViewModel by viewModels { viewModelFactory }
@@ -40,68 +41,84 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        service = ApiConfig.getApiClient(this)!!.create(ApiService::class.java)
-
-        setOnClick()
-        settingViewModel()
-        setupRecyclerView()
         subscribeMainViewModel()
-
-    }
-
-    private fun setupRecyclerView() {
-        val layoutManager = LinearLayoutManager(this)
-        binding.rvStory.layoutManager = layoutManager
-    }
-
-    private fun setGithubData(story: List<DetailStory>) {
-        val adapter = StoryAdapter()
-        adapter.submitList(story)
-        binding.rvStory.adapter = adapter
-
+        setOnClick()
+        setupAdapter()
     }
 
     private fun subscribeMainViewModel() {
         mainViewModel.stories.observe(this) { stories ->
-            setGithubData(stories)
-        }
-
-        mainViewModel.isLoading.observe(this) { isLoading ->
-            showLoading(isLoading)
-        }
-    }
-
-    private fun showLoading(loading: Boolean) {
-        binding.rvStory.isVisible = !loading
-        binding.progressBar.isVisible = loading
-    }
-
-    private fun settingViewModel() {
-        mainViewModel.apply {
-            setService(service)
-            getAllStories()
-        }
-    }
-
-    private fun setOnClick() {
-        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.logout -> {
-                    mainViewModel.logout()
-                    intentWelcome()
-                    true
-                }
-                R.id.language -> {
-                    startActivity(Intent(Settings.ACTION_LOCALE_SETTINGS))
-                    true
-                }
-                else -> false
+            if (stories != null) {
+                adapter.submitData(lifecycle,stories)
             }
         }
 
+        mainViewModel.getUser().observe(this) { user ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                binding.tvGreeting.text = AppUtils.generateGreeting(this)
+            } else {
+                binding.tvGreeting.text = getString(R.string.hello)
+            }
+            binding.tvName.text = user.name
+        }
+    }
+
+    private fun setupAdapter() {
+        val layoutManager = LinearLayoutManager(applicationContext)
+        layoutManager.orientation = LinearLayoutManager.VERTICAL
+        binding.rvStory.layoutManager = layoutManager
+
+        adapter = StoryAdapter()
+
+        binding.rvStory.adapter = adapter.withLoadStateFooter(
+            footer = LoadingStateAdapter {
+                adapter.retry()
+            }
+        )
+    }
+
+    private fun setOnClick() {
         binding.fab.setOnClickListener {
             val intent = Intent(this, AddStoryActivity::class.java)
             startActivity(intent)
+        }
+
+        binding.btnSetting.setOnClickListener {
+            showSortingPopMenu()
+        }
+
+        binding.btnMap.setOnClickListener {
+            startActivity(Intent(this@MainActivity, MapsActivity::class.java))
+        }
+    }
+
+    private fun showSortingPopMenu() {
+        val view = binding.btnSetting
+
+        PopupMenu(this, view).run {
+            menuInflater.inflate(R.menu.option_menu, menu)
+            setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.logout -> {
+                        mainViewModel.logout()
+                        intentWelcome()
+                        true
+                    }
+
+                    R.id.map -> {
+                        startActivity(Intent(this@MainActivity, MapsActivity::class.java))
+                        true
+                    }
+
+                    R.id.language -> {
+                        startActivity(Intent(Settings.ACTION_LOCALE_SETTINGS))
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+            show()
         }
     }
 

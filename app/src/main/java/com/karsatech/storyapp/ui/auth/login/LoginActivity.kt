@@ -14,8 +14,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
-import com.karsatech.storyapp.data.remote.retrofit.ApiConfig
-import com.karsatech.storyapp.data.remote.retrofit.ApiService
+import com.karsatech.storyapp.data.remote.Result
 import com.karsatech.storyapp.databinding.ActivityLoginBinding
 import com.karsatech.storyapp.ui.ViewModelFactory
 import com.karsatech.storyapp.ui.auth.register.RegisterActivity
@@ -30,11 +29,10 @@ import com.karsatech.storyapp.utils.Views.onTextChanged
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
-    private lateinit var service: ApiService
     private lateinit var loginValidator: Validator.Login
 
     private val viewModelFactory: ViewModelProvider.Factory by lazy {
-        ViewModelFactory(UserPreference.getInstance(application.dataStore))
+        ViewModelFactory(UserPreference.getInstance(application.dataStore), this)
     }
 
     private val loginViewModel: LoginViewModel by viewModels { viewModelFactory }
@@ -45,45 +43,17 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        service = ApiConfig.getApiClient(this)!!.create(ApiService::class.java)
         loginValidator = Validator.Login()
 
         playAnimation()
         setupViews()
         setOnClick()
-        settingViewModel()
-        subscribeLoginViewModel()
 
     }
 
     private fun showLoading(loading: Boolean) {
         binding.btnLogin.isVisible = !loading
         binding.progressBar.isVisible = loading
-    }
-
-    private fun subscribeLoginViewModel() {
-        loginViewModel.login.observe(this) { data ->
-            if (!data.error) {
-                data.loginResult?.let { loginViewModel.saveUser(it) }
-                loginViewModel.login()
-
-                val intent = Intent(this, MainActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-                finish()
-            }
-            Toast.makeText(this, data.message, Toast.LENGTH_SHORT).show()
-        }
-
-        loginViewModel.isLoading.observe(this) { loading ->
-            showLoading(loading)
-        }
-
-        loginViewModel.mError.observe(this) { error ->
-            if (error.isNotEmpty()) {
-                Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
     private fun playAnimation() {
@@ -121,14 +91,39 @@ class LoginActivity : AppCompatActivity() {
             }
 
             btnLogin.onCLick {
-                loginViewModel.loginUser(emailEditText.text.toString(), passwordEditText.text.toString())
+                login(emailEditText.text.toString(), passwordEditText.text.toString())
             }
         }
     }
 
-    private fun settingViewModel() {
-        loginViewModel.apply {
-            setService(service)
+    private fun login(email: String, password: String) {
+        loginViewModel.login(email, password).observe(this) { result ->
+            if (result != null) {
+                when(result) {
+                    is Result.Success -> {
+                        showLoading(false)
+                        Toast.makeText(this, result.data.message, Toast.LENGTH_LONG).show()
+
+                        result.data.loginResult?.let {
+                            loginViewModel.saveUser(it)
+                        }
+
+                        loginViewModel.loginUser()
+
+                        val intent = Intent(this, MainActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(intent)
+                        finish()
+                    }
+                    is Result.Loading -> {
+                        showLoading(true)
+                    }
+                    is Result.Error -> {
+                        showLoading(false)
+                        Toast.makeText(this, result.error, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
         }
     }
 

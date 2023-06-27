@@ -23,7 +23,16 @@
 
     <string name="list_story">Daftar Cerita</string>
     <string name="language">Bahasa</string>
+    <string name="map">Peta Cerita</string>
     <string name="add_story">Buat cerita baru</string>
+
+    <string name="good_morning">Selamat Pagi</string>
+    <string name="good_afternoon">Selamat Siang</string>
+    <string name="good_evening">Selamat Sore</string>
+    <string name="good_night">Selamat Malam</string>
+    <string name="hello">Halo</string>
+
+    <string name="get_my_last_location">Dapatkan lokasi terakhir?</string>
 
     <!--    Content Description   -->
 
@@ -33,8 +42,10 @@
     <string name="desc_add_new_story">Tambah cerita Baru</string>
     <string name="image_profile">Gambar profile</string>
     <string name="desc_back_button_from_detail_image">Tombol kembali dari detail gambar</string>
+    <string name="desc_setting_button">Tombol pengaturan</string>
     <string name="desc_detail_image">Detail gambar</string>
     <string name="desc_capture_image">Tangkap gambar</string>
+    <string name="desc_map_button">Tombol peta</string>
 
     <!--    Error String    -->
 
@@ -45,5 +56,6 @@
     <string name="failed_open_camera">Gagal memunculkan kamera</string>
     <string name="failed_to_capture">Gagal mengambil gambar</string>
     <string name="not_getting_permission">Tidak mendapatkan izin</string>
+    <string name="text_error">Error %s</string>
 
 </resources>

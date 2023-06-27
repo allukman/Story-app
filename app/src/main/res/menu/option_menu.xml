@@ -8,6 +8,10 @@
             android:title="@string/language"
             app:showAsAction="never"/>
         <item
+            android:id="@+id/map"
+            android:title="@string/map"
+            app:showAsAction="never"/>
+        <item
             android:id="@+id/logout"
             android:title="@string/logout"
             app:showAsAction="never"/>

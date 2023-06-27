@@ -1,14 +1,16 @@
 package com.karsatech.storyapp.ui.story.add
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.location.Location
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -16,32 +18,48 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.ViewModelProvider
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.karsatech.storyapp.R
-import com.karsatech.storyapp.data.remote.retrofit.ApiConfig
-import com.karsatech.storyapp.data.remote.retrofit.ApiService
 import com.karsatech.storyapp.databinding.ActivityAddStoryBinding
+import com.karsatech.storyapp.ui.ViewModelFactory
 import com.karsatech.storyapp.ui.camera.CameraActivity
 import com.karsatech.storyapp.ui.story.main.MainActivity
 import com.karsatech.storyapp.utils.AppUtils.InitTextWatcher
+import com.karsatech.storyapp.utils.UserPreference
 import com.karsatech.storyapp.utils.Validator
 import com.karsatech.storyapp.utils.Views.onCLick
 import com.karsatech.storyapp.utils.Views.onTextChanged
 import com.karsatech.storyapp.utils.reduceFileImage
 import com.karsatech.storyapp.utils.rotateFile
 import com.karsatech.storyapp.utils.uriToFile
+import com.karsatech.storyapp.data.remote.Result
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 class AddStoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddStoryBinding
-    private var getFile: File? = null
-    private lateinit var service: ApiService
-    private lateinit var uploadValidator: Validator.Upload
 
-    private val addStoryViewModel by viewModels<AddStoryViewModel>()
+    private var getFile: File? = null
+    private var myLocation: Location? = null
+
+    private lateinit var uploadValidator: Validator.Upload
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    private val viewModelFactory: ViewModelProvider.Factory by lazy {
+        ViewModelFactory(UserPreference.getInstance(application.dataStore),this)
+    }
+
+    private val addStoryViewModel: AddStoryViewModel by viewModels { viewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +69,6 @@ class AddStoryActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = getString(R.string.add_story)
 
-        service = ApiConfig.getApiClient(this)!!.create(ApiService::class.java)
         uploadValidator = Validator.Upload()
 
         if (!allPermisionGranted()) {
@@ -62,11 +79,61 @@ class AddStoryActivity : AppCompatActivity() {
             )
         }
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
         setupViews()
         setOnClick()
-        settingViewModel()
-        subscribeViewModel()
+    }
 
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            when {
+                permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {
+                    // Precise location access granted.
+                    getMyLastLocation()
+                }
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
+                    // Only approximate location access granted.
+                    getMyLastLocation()
+                }
+                else -> {
+                    // No location access granted.
+                }
+            }
+        }
+
+    private fun checkPermission(permission: String): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+    private fun getMyLastLocation() {
+        if     (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) &&
+            checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+        ){
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    myLocation = location
+                    Log.d(TAG + "getMyLastLocation", "lat : ${myLocation?.latitude.toString()}, lon : ${myLocation?.longitude.toString()}")
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Location is not found. Try Again",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        } else {
+            requestPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
     }
 
     private fun showLoading(loading: Boolean) {
@@ -74,16 +141,24 @@ class AddStoryActivity : AppCompatActivity() {
         binding.progressBar.isVisible = loading
     }
 
-    private fun subscribeViewModel() {
-        addStoryViewModel.success.observe(this) { data ->
-            if (!data.error) {
-                intentToMainActivity()
+    private fun addStory(file: MultipartBody.Part, description: RequestBody, lat: RequestBody? = null, lon: RequestBody? = null) {
+        addStoryViewModel.addStory(file, description, lat, lon).observe(this) { result ->
+            if (result != null) {
+                when(result) {
+                    is Result.Success -> {
+                        showLoading(false)
+                        Toast.makeText(this, result.data.message, Toast.LENGTH_LONG).show()
+                        intentToMainActivity()
+                    }
+                    is Result.Loading -> {
+                        showLoading(true)
+                    }
+                    is Result.Error -> {
+                        showLoading(false)
+                        Toast.makeText(this, result.error, Toast.LENGTH_LONG).show()
+                    }
+                }
             }
-            Toast.makeText(this, data.message, Toast.LENGTH_SHORT).show()
-        }
-
-        addStoryViewModel.isLoading.observe(this) { loading ->
-            showLoading(loading)
         }
     }
 
@@ -110,6 +185,19 @@ class AddStoryActivity : AppCompatActivity() {
                 addNewStory(descEditText.text.toString())
             }
         }
+
+        binding.checkbox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                Toast.makeText(this, "IsChecked true", Toast.LENGTH_SHORT).show()
+                getMyLastLocation()
+
+                Log.d(TAG + "checkbox", "lat : ${myLocation?.latitude.toString()}, lon : ${myLocation?.longitude.toString()}")
+            } else {
+                Toast.makeText(this, "IsChecked false", Toast.LENGTH_SHORT).show()
+                myLocation = null
+                Log.d(TAG, "lat : ${myLocation?.latitude}, lon : ${myLocation?.longitude}")
+            }
+        }
     }
 
     private fun addNewStory(desc: String) {
@@ -122,13 +210,11 @@ class AddStoryActivity : AppCompatActivity() {
             reqImgFile
         )
 
-        addStoryViewModel.addStory(photo = imageMultipart, description)
-    }
+        val latitude = if (myLocation?.latitude != null) myLocation!!.latitude.toString().toRequestBody(MultipartBody.FORM) else null
+        val longitude = if (myLocation?.longitude != null) myLocation!!.longitude.toString().toRequestBody(MultipartBody.FORM) else null
 
-    private fun settingViewModel() {
-        addStoryViewModel.apply {
-            setService(service)
-        }
+        Log.d(TAG + "addNewStory", "deskripsi : $description, image: ${file.name}, lat: ${myLocation?.latitude}, lon: ${myLocation?.longitude}")
+        addStory(imageMultipart, description, latitude, longitude)
     }
 
     private fun startCameraX() {

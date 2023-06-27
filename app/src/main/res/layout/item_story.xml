@@ -7,36 +7,60 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/dimen_4dp"
     android:layout_marginVertical="@dimen/dimen_8dp"
-    card_view:cardCornerRadius="4dp">
+    card_view:cardCornerRadius="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp">
 
-        <TextView
-            android:id="@+id/nameTextView"
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/img_profile"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/img_profile"
+            card_view:layout_constraintLeft_toLeftOf="parent"
+            card_view:layout_constraintTop_toTopOf="parent"/>
+
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/dimen_8dp"
-            android:maxLines="1"
-            android:ellipsize="end"
-            card_view:layout_constraintRight_toLeftOf="@id/dateTextView"
-            card_view:layout_constraintLeft_toLeftOf="parent"
-            card_view:layout_constraintTop_toTopOf="parent"
-            style="@style/title"
-            tools:text="Name" />
+            android:orientation="vertical"
+            android:layout_marginStart="@dimen/dimen_8dp"
+            card_view:layout_constraintLeft_toRightOf="@id/img_profile"
+            card_view:layout_constraintRight_toRightOf="parent"
+            card_view:layout_constraintTop_toTopOf="@id/img_profile"
+            card_view:layout_constraintBottom_toBottomOf="@id/img_profile">
+
+            <TextView
+                android:id="@+id/nameTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:ellipsize="end"
+                style="@style/title"
+                tools:text="Name" />
+
+            <TextView
+                android:id="@+id/dateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="3"
+                style="@style/date"
+                tools:text="8 January 2020"/>
+        </LinearLayout>
 
         <ImageView
-            android:id="@+id/profileImageView"
-            android:layout_width="240dp"
+            android:id="@+id/iv_image"
+            android:layout_width="0dp"
             android:layout_height="240dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_margin="@dimen/dimen_12dp"
             android:scaleType="centerCrop"
             card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toBottomOf="@id/nameTextView"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@id/img_profile"
+            card_view:layout_constraintBottom_toBottomOf="parent"
             />
 
         <ProgressBar
@@ -44,36 +68,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:indeterminateTint="@color/elm"
-            card_view:layout_constraintLeft_toLeftOf="@id/profileImageView"
-            card_view:layout_constraintRight_toRightOf="@id/profileImageView"
-            card_view:layout_constraintTop_toTopOf="@id/profileImageView"
-            card_view:layout_constraintBottom_toBottomOf="@id/profileImageView"/>
+            card_view:layout_constraintLeft_toLeftOf="@id/iv_image"
+            card_view:layout_constraintRight_toRightOf="@id/iv_image"
+            card_view:layout_constraintTop_toTopOf="@id/iv_image"
+            card_view:layout_constraintBottom_toBottomOf="@id/iv_image"/>
 
-        <TextView
-            android:id="@+id/descTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginStart="@dimen/dimen_8dp"
-            android:ellipsize="end"
-            android:maxLines="3"
-            style="@style/description"
-            tools:text="Description"
-            card_view:layout_constraintTop_toBottomOf="@id/profileImageView"
-            card_view:layout_constraintLeft_toLeftOf="parent"
-            card_view:layout_constraintRight_toRightOf="parent"/>
-
-        <TextView
-            android:id="@+id/dateTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="3"
-            style="@style/date"
-            tools:text="8 January 2020"
-            card_view:layout_constraintTop_toTopOf="@id/nameTextView"
-            card_view:layout_constraintBottom_toBottomOf="@id/nameTextView"
-            card_view:layout_constraintRight_toRightOf="parent"
-            card_view:layout_constraintLeft_toRightOf="@id/nameTextView"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

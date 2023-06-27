@@ -2,6 +2,7 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.StoryApp" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="colorPrimary">@color/elm</item>
+        <item name="background">@color/white</item>
     </style>
 
     <style name="Theme.StoryApp" parent="Base.Theme.StoryApp" />
