@@ -32,6 +32,8 @@
     <string name="hello">Hello</string>
 
     <string name="get_my_last_location">Get my last location?</string>
+    <string name="choose_a_picture">Choose a picture</string>
+    <string name="location_not_found">Location is not found. Try Again</string>
 
     <!--    Content Description   -->
 

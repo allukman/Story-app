@@ -33,6 +33,8 @@
     <string name="hello">Halo</string>
 
     <string name="get_my_last_location">Dapatkan lokasi terakhir?</string>
+    <string name="choose_a_picture">Pilih gambar</string>
+    <string name="location_not_found">Lokasi tidak ditemukan. Coba lagi</string>
 
     <!--    Content Description   -->
 

@@ -16,14 +16,6 @@ import retrofit2.http.Query
 
 interface ApiService {
 
-//    @FormUrlEncoded
-//    @POST("register")
-//    fun registerUser(
-//        @Field("name") name: String,
-//        @Field("email") email: String,
-//        @Field("password") password: String
-//    ): Call<RegisterResponse>
-
     @FormUrlEncoded
     @POST("register")
     suspend fun registerUser(
@@ -31,13 +23,6 @@ interface ApiService {
         @Field("email") email: String,
         @Field("password") password: String
     ): RegisterResponse
-
-//    @FormUrlEncoded
-//    @POST("login")
-//    fun loginUser(
-//        @Field("email") email: String,
-//        @Field("password") password: String
-//    ): Call<LoginResponse>
 
     @FormUrlEncoded
     @POST("login")

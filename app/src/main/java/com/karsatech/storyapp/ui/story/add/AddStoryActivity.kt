@@ -117,11 +117,10 @@ class AddStoryActivity : AppCompatActivity() {
             fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
                 if (location != null) {
                     myLocation = location
-                    Log.d(TAG + "getMyLastLocation", "lat : ${myLocation?.latitude.toString()}, lon : ${myLocation?.longitude.toString()}")
                 } else {
                     Toast.makeText(
                         this,
-                        "Location is not found. Try Again",
+                        getString(R.string.location_not_found),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -188,14 +187,9 @@ class AddStoryActivity : AppCompatActivity() {
 
         binding.checkbox.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                Toast.makeText(this, "IsChecked true", Toast.LENGTH_SHORT).show()
                 getMyLastLocation()
-
-                Log.d(TAG + "checkbox", "lat : ${myLocation?.latitude.toString()}, lon : ${myLocation?.longitude.toString()}")
             } else {
-                Toast.makeText(this, "IsChecked false", Toast.LENGTH_SHORT).show()
                 myLocation = null
-                Log.d(TAG, "lat : ${myLocation?.latitude}, lon : ${myLocation?.longitude}")
             }
         }
     }
@@ -213,7 +207,6 @@ class AddStoryActivity : AppCompatActivity() {
         val latitude = if (myLocation?.latitude != null) myLocation!!.latitude.toString().toRequestBody(MultipartBody.FORM) else null
         val longitude = if (myLocation?.longitude != null) myLocation!!.longitude.toString().toRequestBody(MultipartBody.FORM) else null
 
-        Log.d(TAG + "addNewStory", "deskripsi : $description, image: ${file.name}, lat: ${myLocation?.latitude}, lon: ${myLocation?.longitude}")
         addStory(imageMultipart, description, latitude, longitude)
     }
 
@@ -226,7 +219,7 @@ class AddStoryActivity : AppCompatActivity() {
         val intent = Intent()
         intent.action = Intent.ACTION_GET_CONTENT
         intent.type = "image/*"
-        val chooser = Intent.createChooser(intent, "Choose a Picture")
+        val chooser = Intent.createChooser(intent, getString(R.string.choose_a_picture))
         launcherIntentGalery.launch(chooser)
     }
 

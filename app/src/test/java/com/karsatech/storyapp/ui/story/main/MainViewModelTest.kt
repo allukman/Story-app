@@ -1,5 +1,6 @@
 package com.karsatech.storyapp.ui.story.main
 
+import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -71,6 +72,29 @@ class ListStoryViewModelTest{
         Assert.assertEquals(dummyStoriesResponse.listStory, differ.snapshot())
         Assert.assertEquals(dummyStoriesResponse.listStory.size, differ.snapshot().size)
         Assert.assertEquals(dummyStoriesResponse.listStory[0], differ.snapshot()[0])
+    }
+
+    @Test
+    fun `when getStories Should Return Empty Data`() = runTest {
+        val emptyData: PagingData<DetailStory> = PagingData.empty()
+        val expectedStories = MutableLiveData<PagingData<DetailStory>>()
+        expectedStories.value = emptyData
+        Mockito.`when`(storyRepository.getStories()).thenReturn(expectedStories)
+
+        val listStoryViewModel = MainViewModel(preference,storyRepository)
+        val actualStories: PagingData<DetailStory> = listStoryViewModel.stories.getOrAwaitValue()
+
+        val differ = AsyncPagingDataDiffer(
+            diffCallback = StoryAdapter.DIFF_CALLBACK,
+            updateCallback = noopListUpdateCallback,
+            workerDispatcher = Dispatchers.Main,
+        )
+
+        differ.submitData(actualStories)
+
+        Assert.assertNotNull(differ.snapshot())
+        Assert.assertTrue(differ.snapshot().isEmpty())
+        Assert.assertEquals(0, differ.snapshot().size)
     }
 
 }
